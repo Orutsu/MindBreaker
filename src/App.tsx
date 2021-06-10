@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import store from './src/store';
-import NavigationContainer from './src/screens/navigationContainer';
+import store from './store';
+import NavigationContainer from './screens/navigationContainer';
 
 export default (): React.ReactFragment => (
   <>
@@ -10,4 +10,3 @@ export default (): React.ReactFragment => (
     </Provider>
   </>
 );
-

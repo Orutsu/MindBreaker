@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 // Components
-import { HomeNavigator } from '../navigation';
+import { DashboardNavigator } from '../navigation';
 import { NavigationContainer as NavigationWrap } from '@react-navigation/native';
 
 // Libs & Utils
@@ -22,7 +22,7 @@ const NavigationContainer = () => {
       onReady={() => {
         isReadyNavigation.current = true;
       }}>
-      <HomeNavigator />
+      <DashboardNavigator />
     </NavigationWrap>
   );
 };

@@ -1,3 +1,3 @@
-import HomeNavigator from './HomeNavigator';
+import DashboardNavigator from './DashboardNavigator';
 
-export { HomeNavigator };
+export { DashboardNavigator };

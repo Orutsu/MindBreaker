@@ -1,10 +1,28 @@
-export const HOME_ROOT_ROUTES = {
-  HOME: 'Home',
+export const DASHBOARD_ROOT_ROUTES = {
+  TREE: 'Tree',
+  GOAL: 'Goal',
+  ARCHIVE: 'Archive',
+} as const;
+
+export const TREE_ROUTES = {
+  MAIN_TREE: 'Main_Tree',
+} as const;
+
+export const GOAL_ROUTES = {
+  MAIN_GOAL: 'Main_Goal',
+} as const;
+
+export const ARCHIVE_ROUTES = {
+  MAIN_ARCHIVES: 'Main_Archive',
 } as const;
 
 type valueof<T> = T[keyof T];
 
-export type HomeRootRoutes = valueof<typeof HOME_ROOT_ROUTES>;
+export type DashboardRootRoutes = valueof<typeof DASHBOARD_ROOT_ROUTES>;
+export type TreeRoutes = valueof<typeof TREE_ROUTES>
+export type GoalRoutes = valueof<typeof GOAL_ROUTES>
+export type ArchiveRoutes = valueof<typeof ARCHIVE_ROUTES>
 
-export type RootRoutes = HomeRootRoutes;
-export type AllRoutes = RootRoutes;
+export type ChildrenRoutes = TreeRoutes | GoalRoutes | ArchiveRoutes;
+export type RootRoutes = DashboardRootRoutes;
+export type AllRoutes = ChildrenRoutes | RootRoutes;

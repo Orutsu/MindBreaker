@@ -5,7 +5,7 @@ import { db } from '../index'
  * @param description  description of item
  * @param folderId id of parent folder. If null then root folder
  * @returns promise that takes id of inserted item as resolve param
- * @description lastDateLearned setted to NULL when inserting, learnedWithoutSkip to 0
+ * @description lastDateLearned setted to NULL when inserting, learnedWithoutSkip to 0, isArchived to false
  * @example
  * insertItem("s", "ssss", null).then((insertedId) => {
  *   console.log(insertedId)
@@ -19,7 +19,7 @@ const insertItem = (name: string, description: string, folderId: number | null) 
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO items(name, description, folderId, lastDateLearned, learnedWithoutSkip) VALUES(?, ?, ?, NULL, 0)",
+        "INSERT INTO items(name, description, folderId, lastDateLearned, learnedWithoutSkip, isArchived) VALUES(?, ?, ?, NULL, 0, false)",
         [name, description, folderId],
         (_, result) => {
           resolve(result.insertId)
@@ -274,6 +274,7 @@ const selectItems = () => {
           let items = []
           for (let i = 0; i < result.rows.length; ++i) {
             let item = result.rows.item(i);
+            item.isArchived = item.isArchived == 1 ? true : false
             items.push(item);
           }
           resolve(items)
@@ -311,7 +312,11 @@ const selectItemById = (id: number) => {
         "SELECT * FROM items WHERE id = ?",
         [id],
         (_, result) => {
-          resolve(result.rows.item(0))
+          let item = result.rows.item(0)
+          if (item != undefined) {
+            item.isArchived = item.isArchived == 1 ? true : false
+          }
+          resolve(item)
         },
         (_, err) => {
           reject(err)
@@ -353,6 +358,7 @@ const selectItemsFromFolder = (folderId: number | null) => {
           let items = []
           for (let i = 0; i < result.rows.length; ++i) {
             let item = result.rows.item(i);
+            item.isArchived = item.isArchived == 1 ? true : false
             items.push(item);
           }
           resolve(items)

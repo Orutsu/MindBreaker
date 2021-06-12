@@ -96,6 +96,7 @@ const initDatabase = async () => {
   await activateForeignKeys().then((info) => {
     console.log(info)
   });
+  
   // await dropFoldersTreeTable().then((info) => {
   //   console.log(info)
   // });

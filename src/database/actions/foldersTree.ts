@@ -4,7 +4,6 @@ import { db } from '../index'
  * @param name  name of folder
  * @param locationId id of parent folder. If null then root folder
  * @returns promise that takes id of inserted folder as resolve param
- * @description isArchived setted to false when inserting
  * @example
  * await insertFolder('suka4', null).then((insertedId) => {
  *   console.log(insertedId)
@@ -18,7 +17,7 @@ const insertFolder = (name: string, locationId: number | null) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO foldersTree(name, locationId, isArchived) VALUES(?, ?, false)",
+        "INSERT INTO foldersTree(name, locationId) VALUES(?, ?)",
         [name, locationId],
         (_, result) => {
           resolve(result.insertId)
@@ -147,7 +146,6 @@ const selectFolders = () => {
           let folders = []
           for (let i = 0; i < result.rows.length; ++i) {
             let folder = result.rows.item(i);
-            folder.isArchived = folder.isArchived == 1 ? true : false
             folders.push(folder);
           }
           resolve(folders)
@@ -183,9 +181,6 @@ function selectFolderById(id: number) {
         [id],
         (_, result) => {
           let folder = result.rows.item(0);
-          if (folder != undefined) {
-            folder.isArchived = folder.isArchived == 1 ? true : false
-          }
           resolve(folder)
         },
         (_, err) => {
@@ -229,7 +224,6 @@ function selectFoldersByLocation(locationId: number | null) {
           let folders = []
           for (let i = 0; i < result.rows.length; ++i) {
             let folder = result.rows.item(i);
-            folder.isArchived = folder.isArchived == 1 ? true : false
             folders.push(folder);
           }
           resolve(folders)

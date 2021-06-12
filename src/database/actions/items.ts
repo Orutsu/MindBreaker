@@ -127,6 +127,36 @@ const updateItemFolderId = (id: number, folderId: number | null) => {
 }
 
 /**
+ * @param id item id to update
+ * @param isArchived isArchived to set
+ * @returns promise that takes boolean(isSuccess) as resolve param
+ * @example
+ * await updateItemIsArchived(2, true).then((isSuccess) => {
+ *   console.log(isSuccess)
+ * })
+ * @example
+ * await updateItemIsArchived(2, false);
+ */
+ const updateItemIsArchived = (id: number, isArchived: boolean) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "UPDATE items SET isArchived = ? WHERE id = ? ",
+        [isArchived, id],
+        (_, result) => {
+          resolve(result.rowsAffected === 1)
+        },
+        (_, err) => {
+          reject(err)
+          return false
+        }
+      )
+    })
+  })
+  return promise
+}
+
+/**
  * @param id folder id to update
  * @param lastDateLearned lastDateLearned to set
  * @returns promise that takes boolean(isSuccess) as resolve param
@@ -342,6 +372,7 @@ export {
   updateItemName,
   updateItemDescription,
   updateItemFolderId,
+  updateItemIsArchived,
   updateItemLastDateLearned,
   updateItemLearnedWithoutSkip,
   deleteItem,

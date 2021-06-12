@@ -94,36 +94,6 @@ const updateFolderLocation = (id: number, locationId: number | null) => {
 }
 
 /**
- * @param id folder id to update
- * @param locationId locationId to set
- * @returns promise that takes boolean(isSuccess) as resolve param
- * @example
- * await updateFolderIsArchived(2, true).then((isSuccess) => {
- *   console.log(isSuccess)
- * })
- * @example
- * await updateFolderIsArchived(2, false);
- */
-const updateFolderIsArchived = (id: number, isArchived: boolean) => {
-  const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        "UPDATE foldersTree SET isArchived = ? WHERE id = ? ",
-        [isArchived, id],
-        (_, result) => {
-          resolve(result.rowsAffected === 1)
-        },
-        (_, err) => {
-          reject(err)
-          return false
-        }
-      )
-    })
-  })
-  return promise
-}
-
-/**
  * @param id folder id to delete
  * @returns promise that takes boolean(isSuccess) as resolve param
  * @example
@@ -279,7 +249,6 @@ export {
   insertFolder,
   updateFolderName,
   updateFolderLocation,
-  updateFolderIsArchived,
   deleteFolder,
   selectFolders,
   selectFolderById,

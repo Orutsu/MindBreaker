@@ -58,7 +58,7 @@ const createFoldersTreeTable = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS foldersTree (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, locationId INTEGER, isArchived BOOLEAN NOT NULL, FOREIGN KEY(locationId) REFERENCES foldersTree(id))",
+        "CREATE TABLE IF NOT EXISTS foldersTree (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, locationId INTEGER, FOREIGN KEY(locationId) REFERENCES foldersTree(id))",
         [],
         (_, result) => {
           resolve("FoldersTree table created")
@@ -77,7 +77,7 @@ const createItemsTable = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, folderId INTEGER, lastDateLearned DATE, learnedWithoutSkip number NOT NULL, FOREIGN KEY(folderId) REFERENCES foldersTree(id))",
+        "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, isArchived BOOLEAN NOT NULL, folderId INTEGER, lastDateLearned DATE, learnedWithoutSkip number NOT NULL, FOREIGN KEY(folderId) REFERENCES foldersTree(id))",
         [],
         (_, result) => {
           resolve("Items table created")
@@ -116,6 +116,7 @@ let item: {
   name: string,
   description: string,
   folderId: number | null,
+  isArchived: boolean,
   lastDateLearned: string, // 'yyyy-mm-dd'
   learnedWithoutSkip: number
 }
@@ -124,7 +125,6 @@ let folder: {
   id: number,
   name: string,
   locationId: number | null,
-  isArchived: boolean,
 }
 
 

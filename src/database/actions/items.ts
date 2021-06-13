@@ -1,4 +1,4 @@
-import { db } from '../index'
+import { db, Task } from '../index'
 
 /**
  * @param name  name of item
@@ -17,14 +17,15 @@ import { db } from '../index'
  */
 const insertItem = (name: string, description: string, folderId: number | null) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null | false)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
-        "INSERT INTO items(name, description, folderId, lastDateLearned, learnedWithoutSkip, isArchived) VALUES(?, ?, ?, NULL, 0, false)",
-        [name, description, folderId],
+        "INSERT INTO items(name, description, folderId, lastDateLearned, learnedWithoutSkip, isArchived) VALUES(?, ?, ?, NULL, 0, ?)",
+        [name, description, folderId, false],
         (_: any, result: { insertId: unknown }) => {
           resolve(result.insertId)
         },
         (_: any, err: any) => {
+          console.log(err)
           reject(err)
           return false
         }
@@ -265,7 +266,7 @@ const deleteItem = (id: number) => {
  * })
  */
 const selectItems = () => {
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve: (items: Task[]) => void, reject) => {
     db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM items",

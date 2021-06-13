@@ -15,7 +15,7 @@ export const fillCenter: ViewStyle = {
   justifyContent: 'center',
 };
 
-export const columnSpaceBetwen: ViewStyle = {
+export const columnSpaceBetween: ViewStyle = {
   flex: 1,
   flexDirection: 'column',
   justifyContent: 'space-between',

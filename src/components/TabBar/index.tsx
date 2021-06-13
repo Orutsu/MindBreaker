@@ -54,7 +54,7 @@ const HomeTabBar = () => {
   // console.log('activeRouteName', activeRouteName);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: COLORS.WHITE_SMOKE}}>
       <View style={[positionHelpers.rowFill, styles.tabbar]}>
         {tabBarItems.map((item, index) => {
           const isActive = item.activeRoutes.includes(

@@ -1,42 +1,65 @@
 import React, { useEffect, useState } from 'react';
 // Components
-import { SafeAreaView, Text, TextInput, Button } from 'react-native';
+import { SafeAreaView, Text, TextInput, Button, FlatList, View } from 'react-native';
 import Header from '../../../components/Header';
+import FolderItem from '../../../components/FolderItem';
 
 // Database
 import { insertFolder, selectFolderById, selectFolders } from '../../../database/actions/foldersTree'
+import { insertItem, selectItems } from '../../../database/actions/items';
 
 // Types
-import { Folder } from '../../../database';
+import { Folder, Task } from '../../../database';
+
+// Styles
+import styles from './styles';
+
 
 const TreeMainScreen = () => {
-  const [folders, setFolders] = useState<Folder[]>([])
+  const [foldersList, setFoldersList] = useState<Folder[]>([])
+  const [tasksList, setTasksList] = useState<Task[]>([])
 
   useEffect(() => {
     selectFolders().then((folders) => {
-      setFolders(folders);
+      setFoldersList(folders);
       console.log(folders);
+    })
+    selectItems().then((tasks) =>  {
+      setTasksList(tasks);
+      console.log(tasks);
     })
   }, [])
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <Header title="Tree" />
-      <Text style={{ marginTop: 20 }}>
-        TreeMainScreen
-      </Text>
-      <Button title="suka" onPress={ async() => {
-
-        let id = -1;
-        await insertFolder("FolderKeke", null).then((insertedId) => {
-          id = insertedId;
-        })
-
-        await selectFolderById(id).then((folder) => {
-          console.log(folder)
-        })
-
-      }} />
+      <View style={styles.pageContainer}>
+        <FlatList 
+          data={foldersList} 
+          style={{flexGrow: 0}}
+          keyExtractor={(item) => `${item.name}_${item.id}`} 
+          renderItem={
+            ({item}) => 
+              <FolderItem 
+                onItemPress={() => {
+                  insertItem("Random task", "ssss", null).then((insertedId) => {
+                      console.log(insertedId)
+                  })
+                }} 
+                folderName={item.name} 
+                style={{marginTop: 1}}
+              />
+          } 
+        />
+        <FlatList 
+          data={tasksList} 
+          style={{flexGrow: 0}}
+          keyExtractor={(item) => `${item.name}_${item.id}`} 
+          renderItem={
+            ({item}) => <Text>{item.name}</Text>
+          } 
+        />
+      </View>
     </SafeAreaView>
   );
 };

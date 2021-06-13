@@ -112,7 +112,7 @@ const initDatabase = async () => {
 
 }
 
-export type Item = {
+export type Task = {
   id: number,
   name: string,
   description: string,
@@ -127,7 +127,6 @@ export type Folder = {
   name: string,
   locationId: number | null,
 }
-
 
 export {
   db,

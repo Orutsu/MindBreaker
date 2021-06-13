@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 // Components
-import { SafeAreaView, Text, TextInput, Button, FlatList, View } from 'react-native';
+import { SafeAreaView, FlatList, View } from 'react-native';
 import Header from '../../../components/Header';
 import FolderItem from '../../../components/FolderItem';
+import TaskItem from '../../../components/TaskItem';
 
 // Database
-import { insertFolder, selectFolderById, selectFolders } from '../../../database/actions/foldersTree'
+import { insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
 import { insertItem, selectItems } from '../../../database/actions/items';
 
 // Types
@@ -18,9 +19,10 @@ import styles from './styles';
 const TreeMainScreen = () => {
   const [foldersList, setFoldersList] = useState<Folder[]>([])
   const [tasksList, setTasksList] = useState<Task[]>([])
+  const [currentFolderId, setCurrentFolderId] = useState<number | null>(null)
 
   useEffect(() => {
-    selectFolders().then((folders) => {
+    selectFoldersByLocation(currentFolderId).then((folders) => {
       setFoldersList(folders);
       console.log(folders);
     })
@@ -28,7 +30,7 @@ const TreeMainScreen = () => {
       setTasksList(tasks);
       console.log(tasks);
     })
-  }, [])
+  }, [currentFolderId])
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -45,6 +47,7 @@ const TreeMainScreen = () => {
                   insertItem("Random task", "ssss", null).then((insertedId) => {
                       console.log(insertedId)
                   })
+                  setCurrentFolderId(item.id)
                 }} 
                 folderName={item.name} 
                 style={{marginTop: 1}}
@@ -56,7 +59,11 @@ const TreeMainScreen = () => {
           style={{flexGrow: 0}}
           keyExtractor={(item) => `${item.name}_${item.id}`} 
           renderItem={
-            ({item}) => <Text>{item.name}</Text>
+            ({item}) => 
+              <TaskItem 
+                taskName={item.name} 
+                style={{marginTop: 1}} 
+              />
           } 
         />
       </View>

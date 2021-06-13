@@ -215,7 +215,7 @@ function selectFolderById(id: number) {
  */
 function selectFoldersByLocation(locationId: number | null) {
   const whereContition = locationId == null ? "WHERE locationId IS NULL" : "WHERE locationId = ?"
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve: (folders: Folder[]) => void, reject) => {
     db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM foldersTree " + whereContition,
@@ -230,6 +230,7 @@ function selectFoldersByLocation(locationId: number | null) {
         },
         (_: any, err: any) => {
           reject(err)
+          console.log('ssssss')
           return false
         }
       )

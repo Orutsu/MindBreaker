@@ -5,7 +5,7 @@ import Header from '../../../components/Header';
 import FolderItem from '../../../components/FolderItem';
 
 // Database
-import { insertFolder, selectFolderById, selectFolders } from '../../../database/actions/foldersTree'
+import { insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
 import { insertItem, selectItems } from '../../../database/actions/items';
 
 // Types
@@ -14,6 +14,7 @@ import { Folder, Task } from '../../../database';
 // Styles
 import styles from './styles';
 
+import navigationService from '../../../navigation/navigationService';
 
 const TreeMainScreen = () => {
   const [foldersList, setFoldersList] = useState<Folder[]>([])
@@ -24,40 +25,45 @@ const TreeMainScreen = () => {
       setFoldersList(folders);
       console.log(folders);
     })
-    selectItems().then((tasks) =>  {
+    selectItems().then((tasks) => {
       setTasksList(tasks);
       console.log(tasks);
     })
   }, [])
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <Header title="Tree" />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Header title="Tree" onPlusPress={() => {
+        navigationService.navigate('Tree', {screen: 'New_Item' })
+      }} />
       <View style={styles.pageContainer}>
-        <FlatList 
-          data={foldersList} 
-          style={{flexGrow: 0}}
-          keyExtractor={(item) => `${item.name}_${item.id}`} 
+        <FlatList
+          data={foldersList}
+          style={{ flexGrow: 0 }}
+          keyExtractor={(item) => `${item.name}_${item.id}`}
           renderItem={
-            ({item}) => 
-              <FolderItem 
+            ({ item }) =>
+              <FolderItem
                 onItemPress={() => {
-                  insertItem("Random task", "ssss", null).then((insertedId) => {
-                      console.log(insertedId)
+                  selectFoldersByLocation(item.id).then((folders) => {
+                    setFoldersList(folders);
                   })
-                }} 
-                folderName={item.name} 
-                style={{marginTop: 1}}
+                  insertItem("Random task", "ssss", null).then((insertedId) => {
+                    console.log(insertedId)
+                  })
+                }}
+                folderName={item.name}
+                style={{ marginTop: 1 }}
               />
-          } 
+          }
         />
-        <FlatList 
-          data={tasksList} 
-          style={{flexGrow: 0}}
-          keyExtractor={(item) => `${item.name}_${item.id}`} 
+        <FlatList
+          data={tasksList}
+          style={{ flexGrow: 0 }}
+          keyExtractor={(item) => `${item.name}_${item.id}`}
           renderItem={
-            ({item}) => <Text>{item.name}</Text>
-          } 
+            ({ item }) => <Text>{item.name}</Text>
+          }
         />
       </View>
     </SafeAreaView>

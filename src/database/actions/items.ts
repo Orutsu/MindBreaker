@@ -3,11 +3,11 @@ import { db, Task } from '../index'
 /**
  * @param name  name of item
  * @param description  description of item
- * @param folderId id of parent folder. If null then root folder
+ * @param folderId id of parent folder. If 0 then root folder
  * @returns promise that takes id of inserted item as resolve param
  * @description lastDateLearned setted to NULL when inserting, learnedWithoutSkip to 0, isArchived to false
  * @example
- * insertItem("s", "ssss", null).then((insertedId) => {
+ * insertItem("s", "ssss", 0).then((insertedId) => {
  *   console.log(insertedId)
  * })
  * @example
@@ -15,7 +15,7 @@ import { db, Task } from '../index'
  *   console.log(insertedId)
  * })
  */
-const insertItem = (name: string, description: string, folderId: number | null) => {
+const insertItem = (name: string, description: string, folderId: number) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null | false)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
@@ -106,11 +106,11 @@ const updateItemDescription = (id: number, description: string) => {
  *   console.log(isSuccess)
  * })
  * @example
- * await updateItemFolderId(2, null)
+ * await updateItemFolderId(2, 0)
  */
-const updateItemFolderId = (id: number, folderId: number | null) => {
+const updateItemFolderId = (id: number, folderId: number) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET folderId = ? WHERE id = ? ",
         [folderId, id],
@@ -348,12 +348,11 @@ const selectItemById = (id: number) => {
  *   console.log(items)
  * })
  */
-const selectItemsFromFolder = (folderId: number | null) => {
-  const whereContition = folderId == null ? "WHERE folderId IS NULL" : "WHERE folderId = ?"
-  const promise = new Promise((resolve, reject) => {
-    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+const selectItemsFromFolder = (folderId: number) => {
+  const promise = new Promise((resolve: (items: Task[]) => void, reject) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
-        "SELECT * FROM items " + whereContition,
+        "SELECT * FROM items WHERE folderId = ?",
         [folderId],
         (_: any, result: { rows: { length: number; item: (arg0: number) => any } }) => {
           let items = []

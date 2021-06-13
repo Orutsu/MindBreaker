@@ -39,7 +39,9 @@ const NewItemScreen: React.FC<Props> = ({
 }) => {
 
   const [type, setType] = useState('Folder')
-  const [name, setName] = useState('')
+  const [folderName, setFolderName] = useState('')
+  const [taskName, setTaskName] = useState('')
+  const [taskDescription, setTaskDescription] = useState('')
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -56,14 +58,24 @@ const NewItemScreen: React.FC<Props> = ({
           }}
           value={type}
         />
-        {type == 'Folder' && <Text>name</Text>}
-        {type == 'Folder' && <TextInput style={styles.inputPickerIOS} value={name} onChangeText={(value) => { setName(value) }}></TextInput>}
+        {type == 'Folder' && <Text>Folder name</Text>}
+        {type == 'Folder' && <TextInput style={styles.inputPickerIOS} value={folderName} onChangeText={(value) => { setFolderName(value) }}></TextInput>}
+
+
+        {type == 'Task' && <Text>Task name</Text>}
+        {type == 'Task' && <TextInput style={styles.inputPickerIOS} value={taskName} onChangeText={(value) => { setTaskName(value) }}></TextInput>}
+
+
+        {type == 'Task' && <Text>Task description</Text>}
+        {type == 'Task' && <TextInput style={styles.inputPickerIOS} value={taskDescription} onChangeText={(value) => { setTaskDescription(value) }}></TextInput>}
 
         <TouchableOpacity onPress={() => {
-          insertFolder(name, folderId);
-          selectFolders().then((folders) => {
-            console.log(folders)
-          })
+          if(type == 'Folder'){
+            insertFolder(folderName, folderId);
+          }
+          else if(type == 'Task'){
+            insertItem(taskName, taskDescription, folderId);
+          }
           navigationService.goBack()
         }} style={styles.button}>
           <Text>Create</Text>
@@ -72,6 +84,8 @@ const NewItemScreen: React.FC<Props> = ({
     </SafeAreaView>
   );
 };
+
+
 
 export default NewItemScreen;
 

@@ -116,7 +116,7 @@ export type Task = {
   id: number,
   name: string,
   description: string,
-  folderId: number | null,
+  folderId: number,
   isArchived: boolean,
   lastDateLearned: string, // 'yyyy-mm-dd'
   learnedWithoutSkip: number
@@ -125,7 +125,7 @@ export type Task = {
 export type Folder = {
   id: number,
   name: string,
-  locationId: number | null,
+  locationId: number,
 }
 
 export {

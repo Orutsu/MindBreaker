@@ -2,10 +2,10 @@ import { db, Folder } from '../index'
 
 /**
  * @param name  name of folder
- * @param locationId id of parent folder. If null then root folder
+ * @param locationId id of parent folder. If 0 then root folder
  * @returns promise that takes id of inserted folder as resolve param
  * @example
- * await insertFolder('suka4', null).then((insertedId) => {
+ * await insertFolder('suka4', 0).then((insertedId) => {
  *   console.log(insertedId)
  * })
  * @example
@@ -13,7 +13,7 @@ import { db, Folder } from '../index'
  *   console.log(insertedId)
  * })
  */
-const insertFolder = (name: string, locationId: number | null) => {
+const insertFolder = (name: string, locationId: number) => {
   const promise = new Promise((resolve: (id: number) => void, reject) => {
     db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
@@ -73,9 +73,9 @@ const updateFolderName = (id: number, name: string) => {
  * @example
  * await updateFolderLocation(2, 1);
  */
-const updateFolderLocation = (id: number, locationId: number | null) => {
+const updateFolderLocation = (id: number, locationId: number) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE foldersTree SET locationId = ? WHERE id = ? ",
         [locationId, id],
@@ -193,8 +193,30 @@ function selectFolderById(id: number) {
   return promise
 }
 
+
+ function selectFolderByName(name: string) {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: string[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+      tx.executeSql(
+        "SELECT * FROM foldersTree WHERE name = ?",
+        [name],
+        (_: any, result: { rows: { item: (arg0: number) => any } }) => {
+          let folder = result.rows.item(0);
+          resolve(folder)
+        },
+        (_: any, err: any) => {
+          reject(err)
+          return false
+        }
+      )
+    })
+  })
+  return promise
+}
+
+
 /**
- * @param locationId parent id to select children from it. If null then selects from root folder
+ * @param locationId parent id to select children from it. If 0 then selects from root folder
  * @returns promise that takes Array as resolve param
  * Array [
  *   Object {
@@ -209,16 +231,15 @@ function selectFolderById(id: number) {
  *   console.log(folders)
  * })
  * @example
- * await selectFoldersByLocation(null).then((folders) => {
+ * await selectFoldersByLocation(0).then((folders) => {
  *   console.log(folders)
  * })
  */
-function selectFoldersByLocation(locationId: number | null) {
-  const whereContition = locationId == null ? "WHERE locationId IS NULL" : "WHERE locationId = ?"
+function selectFoldersByLocation(locationId: number) {
   const promise = new Promise((resolve: (folders: Folder[]) => void, reject) => {
-    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
-        "SELECT * FROM foldersTree " + whereContition,
+        "SELECT * FROM foldersTree WHERE locationId = ?",
         [locationId],
         (_: any, result: { rows: { length: number; item: (arg0: number) => any } }) => {
           let folders = []
@@ -247,6 +268,7 @@ export {
   deleteFolder,
   selectFolders,
   selectFolderById,
-  selectFoldersByLocation
+  selectFoldersByLocation,
+  selectFolderByName
 };
 

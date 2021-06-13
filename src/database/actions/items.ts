@@ -17,14 +17,14 @@ import { db } from '../index'
  */
 const insertItem = (name: string, description: string, folderId: number | null) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "INSERT INTO items(name, description, folderId, lastDateLearned, learnedWithoutSkip, isArchived) VALUES(?, ?, ?, NULL, 0, false)",
         [name, description, folderId],
-        (_, result) => {
+        (_: any, result: { insertId: unknown }) => {
           resolve(result.insertId)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -49,14 +49,14 @@ const insertItem = (name: string, description: string, folderId: number | null) 
  */
 const updateItemName = (id: number, name: string) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET name = ? WHERE id = ? ",
         [name, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -79,14 +79,14 @@ const updateItemName = (id: number, name: string) => {
  */
 const updateItemDescription = (id: number, description: string) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET description = ? WHERE id = ? ",
         [description, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -109,14 +109,14 @@ const updateItemDescription = (id: number, description: string) => {
  */
 const updateItemFolderId = (id: number, folderId: number | null) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET folderId = ? WHERE id = ? ",
         [folderId, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -139,14 +139,14 @@ const updateItemFolderId = (id: number, folderId: number | null) => {
  */
  const updateItemIsArchived = (id: number, isArchived: boolean) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | boolean)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET isArchived = ? WHERE id = ? ",
         [isArchived, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -169,14 +169,14 @@ const updateItemFolderId = (id: number, folderId: number | null) => {
  */
 const updateItemLastDateLearned = (id: number, lastDateLearned: string) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET lastDateLearned = ? WHERE id = ? ",
         [lastDateLearned, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -199,14 +199,14 @@ const updateItemLastDateLearned = (id: number, lastDateLearned: string) => {
  */
 const updateItemLearnedWithoutSkip = (id: number, learnedWithoutSkip: number) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: number[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE items SET learnedWithoutSkip = ? WHERE id = ? ",
         [learnedWithoutSkip, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -229,14 +229,14 @@ const updateItemLearnedWithoutSkip = (id: number, learnedWithoutSkip: number) =>
  */
 const deleteItem = (id: number) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: number[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "DELETE FROM items WHERE id = ?",
         [id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -266,11 +266,11 @@ const deleteItem = (id: number) => {
  */
 const selectItems = () => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM items",
         [],
-        (_, result) => {
+        (_: any, result: { rows: { length: number; item: (arg0: number) => any } }) => {
           let items = []
           for (let i = 0; i < result.rows.length; ++i) {
             let item = result.rows.item(i);
@@ -279,7 +279,7 @@ const selectItems = () => {
           }
           resolve(items)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -307,18 +307,18 @@ const selectItems = () => {
  */
 const selectItemById = (id: number) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: number[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM items WHERE id = ?",
         [id],
-        (_, result) => {
+        (_: any, result: { rows: { item: (arg0: number) => any } }) => {
           let item = result.rows.item(0)
           if (item != undefined) {
             item.isArchived = item.isArchived == 1 ? true : false
           }
           resolve(item)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -350,11 +350,11 @@ const selectItemById = (id: number) => {
 const selectItemsFromFolder = (folderId: number | null) => {
   const whereContition = folderId == null ? "WHERE folderId IS NULL" : "WHERE folderId = ?"
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM items " + whereContition,
         [folderId],
-        (_, result) => {
+        (_: any, result: { rows: { length: number; item: (arg0: number) => any } }) => {
           let items = []
           for (let i = 0; i < result.rows.length; ++i) {
             let item = result.rows.item(i);
@@ -363,7 +363,7 @@ const selectItemsFromFolder = (folderId: number | null) => {
           }
           resolve(items)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }

@@ -1,11 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // Components
 import { SafeAreaView, Text, TextInput, Button } from 'react-native';
 import Header from '../../../components/Header';
 
-import { insertFolder, selectFolderById } from '../../../database/actions/foldersTree'
+// Database
+import { insertFolder, selectFolderById, selectFolders } from '../../../database/actions/foldersTree'
+
+// Types
+import { Folder } from '../../../database';
 
 const TreeMainScreen = () => {
+  const [folders, setFolders] = useState<Folder[]>([])
+
+  useEffect(() => {
+    selectFolders().then((folders) => {
+      setFolders(folders);
+      console.log(folders);
+    })
+  }, [])
+
   return (
     <SafeAreaView>
       <Header title="Tree" />
@@ -14,8 +27,8 @@ const TreeMainScreen = () => {
       </Text>
       <Button title="suka" onPress={ async() => {
 
-        let id : number;
-        await insertFolder("FolderName", null).then((insertedId) => {
+        let id = -1;
+        await insertFolder("FolderKeke", null).then((insertedId) => {
           id = insertedId;
         })
 

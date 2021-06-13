@@ -1,4 +1,4 @@
-import { db } from '../index'
+import { db, Folder } from '../index'
 
 /**
  * @param name  name of folder
@@ -14,15 +14,15 @@ import { db } from '../index'
  * })
  */
 const insertFolder = (name: string, locationId: number | null) => {
-  const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+  const promise = new Promise((resolve: (id: number) => void, reject) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "INSERT INTO foldersTree(name, locationId) VALUES(?, ?)",
         [name, locationId],
-        (_, result) => {
+        (_: any, result: { insertId: number }) => {
           resolve(result.insertId)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -45,14 +45,14 @@ const insertFolder = (name: string, locationId: number | null) => {
  */
 const updateFolderName = (id: number, name: string) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE foldersTree SET name = ? WHERE id = ? ",
         [name, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -75,14 +75,14 @@ const updateFolderName = (id: number, name: string) => {
  */
 const updateFolderLocation = (id: number, locationId: number | null) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "UPDATE foldersTree SET locationId = ? WHERE id = ? ",
         [locationId, id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -104,14 +104,14 @@ const updateFolderLocation = (id: number, locationId: number | null) => {
  */
 const deleteFolder = (id: number) => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: number[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "DELETE FROM foldersTree WHERE id = ?",
         [id],
-        (_, result) => {
+        (_: any, result: { rowsAffected: number }) => {
           resolve(result.rowsAffected === 1)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -137,12 +137,12 @@ const deleteFolder = (id: number) => {
  * })
  */
 const selectFolders = () => {
-  const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+  const promise = new Promise((resolve: (folders: Folder[]) => void, reject) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM foldersTree",
         [],
-        (_, result) => {
+        (_: any, result: { rows: { length: number; item: (arg0: number) => any } }) => {
           let folders = []
           for (let i = 0; i < result.rows.length; ++i) {
             let folder = result.rows.item(i);
@@ -150,7 +150,7 @@ const selectFolders = () => {
           }
           resolve(folders)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -175,15 +175,15 @@ const selectFolders = () => {
  */
 function selectFolderById(id: number) {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: number[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM foldersTree WHERE id = ?",
         [id],
-        (_, result) => {
+        (_: any, result: { rows: { item: (arg0: number) => any } }) => {
           let folder = result.rows.item(0);
           resolve(folder)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -216,11 +216,11 @@ function selectFolderById(id: number) {
 function selectFoldersByLocation(locationId: number | null) {
   const whereContition = locationId == null ? "WHERE locationId IS NULL" : "WHERE locationId = ?"
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: (number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
       tx.executeSql(
         "SELECT * FROM foldersTree " + whereContition,
         [locationId],
-        (_, result) => {
+        (_: any, result: { rows: { length: number; item: (arg0: number) => any } }) => {
           let folders = []
           for (let i = 0; i < result.rows.length; ++i) {
             let folder = result.rows.item(i);
@@ -228,7 +228,7 @@ function selectFoldersByLocation(locationId: number | null) {
           }
           resolve(folders)
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }

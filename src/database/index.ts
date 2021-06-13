@@ -18,14 +18,14 @@ const activateForeignKeys = () => {
 
 const dropFoldersTreeTable = () => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void; }) => {
       tx.executeSql(
         "DROP TABLE IF EXISTS foldersTree",
         [],
-        (_, result) => {
+        (_: any, result: any) => {
           resolve("FoldersTree table dropped")
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -37,14 +37,14 @@ const dropFoldersTreeTable = () => {
 
 const dropItemsTable = () => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void; }) => {
       tx.executeSql(
         "DROP TABLE IF EXISTS items",
         [],
-        (_, result) => {
+        (_: any, result: any) => {
           resolve("Items table dropped")
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -56,14 +56,14 @@ const dropItemsTable = () => {
 
 const createFoldersTreeTable = () => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void; }) => {
       tx.executeSql(
         "CREATE TABLE IF NOT EXISTS foldersTree (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, locationId INTEGER, FOREIGN KEY(locationId) REFERENCES foldersTree(id))",
         [],
-        (_, result) => {
+        (_: any, result: any) => {
           resolve("FoldersTree table created")
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -75,14 +75,14 @@ const createFoldersTreeTable = () => {
 
 const createItemsTable = () => {
   const promise = new Promise((resolve, reject) => {
-    db.transaction((tx) => {
+    db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void; }) => {
       tx.executeSql(
         "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, isArchived BOOLEAN NOT NULL, folderId INTEGER, lastDateLearned DATE, learnedWithoutSkip number NOT NULL, FOREIGN KEY(folderId) REFERENCES foldersTree(id))",
         [],
-        (_, result) => {
+        (_: any, result: any) => {
           resolve("Items table created")
         },
-        (_, err) => {
+        (_: any, err: any) => {
           reject(err)
           return false
         }
@@ -112,7 +112,7 @@ const initDatabase = async () => {
 
 }
 
-let item: {
+export type Item = {
   id: number,
   name: string,
   description: string,
@@ -122,7 +122,7 @@ let item: {
   learnedWithoutSkip: number
 }
 
-let folder: {
+export type Folder = {
   id: number,
   name: string,
   locationId: number | null,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RootRoutes } from './routes';
+import { ChildrenRoutes, RootRoutes } from './routes';
 import {
   NavigationContainerRef,
   CommonActions,
@@ -16,6 +16,7 @@ export const navigationRef = React.createRef<NavigationContainerRef>();
 
 type NavigationParams = {
   params?: object;
+  screen?: ChildrenRoutes;
 };
 
 type ResetParams = {

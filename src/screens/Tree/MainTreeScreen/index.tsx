@@ -15,6 +15,7 @@ import { Folder, Task } from '../../../database';
 // Styles
 import styles from './styles';
 
+import navigationService from '../../../navigation/navigationService';
 
 const TreeMainScreen = () => {
   const [foldersList, setFoldersList] = useState<Folder[]>([])
@@ -26,38 +27,42 @@ const TreeMainScreen = () => {
       setFoldersList(folders);
       console.log(folders);
     })
-    selectItems().then((tasks) =>  {
+    selectItems().then((tasks) => {
       setTasksList(tasks);
       console.log(tasks);
     })
   }, [currentFolderId])
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <Header title="Tree" />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Header title="Tree" onPlusPress={() => {
+        navigationService.navigate('Tree', {screen: 'New_Item' })
+      }} />
       <View style={styles.pageContainer}>
-        <FlatList 
-          data={foldersList} 
-          style={{flexGrow: 0}}
-          keyExtractor={(item) => `${item.name}_${item.id}`} 
+        <FlatList
+          data={foldersList}
+          style={{ flexGrow: 0 }}
+          keyExtractor={(item) => `${item.name}_${item.id}`}
           renderItem={
-            ({item}) => 
-              <FolderItem 
+            ({ item }) =>
+              <FolderItem
                 onItemPress={() => {
-                  insertItem("Random task", "ssss", null).then((insertedId) => {
-                      console.log(insertedId)
+                  selectFoldersByLocation(item.id).then((folders) => {
+                    setFoldersList(folders);
                   })
-                  setCurrentFolderId(item.id)
-                }} 
-                folderName={item.name} 
-                style={{marginTop: 1}}
+                  insertItem("Random task", "ssss", null).then((insertedId) => {
+                    console.log(insertedId)
+                  })
+                }}
+                folderName={item.name}
+                style={{ marginTop: 1 }}
               />
-          } 
+          }
         />
-        <FlatList 
-          data={tasksList} 
-          style={{flexGrow: 0}}
-          keyExtractor={(item) => `${item.name}_${item.id}`} 
+        <FlatList
+          data={tasksList}
+          style={{ flexGrow: 0 }}
+          keyExtractor={(item) => `${item.name}_${item.id}`}
           renderItem={
             ({item}) => 
               <TaskItem 

@@ -1,6 +1,7 @@
 import React from 'react';
 // Screens
 import TreeMainScreen from '../screens/Tree/MainTreeScreen';
+import NewItem from '../screens/Tree/NewItem';
 
 // Libs & Utils
 import { createStackNavigator } from '@react-navigation/stack';
@@ -17,6 +18,7 @@ const TreeNavigator = () => (
     headerMode="none"
     >
     <TreeTabs.Screen name={TREE_ROUTES.MAIN_TREE} component={TreeMainScreen} />
+    <TreeTabs.Screen name={TREE_ROUTES.NEW_ITEM} component={NewItem} />
   </TreeTabs.Navigator>
 );
 

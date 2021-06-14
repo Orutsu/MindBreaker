@@ -4,6 +4,9 @@ import { SafeAreaView, Text, TextInput, TouchableOpacity, FlatList, View } from 
 import Header from '../../../components/Header';
 import FolderItem from '../../../components/FolderItem';
 
+// Libs && Utills
+import navigationService from '../../../navigation/navigationService';
+
 // Database
 import { insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
 import { insertItem, selectItems } from '../../../database/actions/items';
@@ -15,7 +18,6 @@ import { Folder, Task } from '../../../database';
 import styles from './styles';
 import { StyleSheet } from 'react-native'
 
-import navigationService from '../../../navigation/navigationService';
 
 import RNPickerSelect from 'react-native-picker-select';
 
@@ -30,18 +32,23 @@ let itemTypes = [
   },
 ]
 
-interface Props {
-  folderId?: number | null
-}
-
-const NewItemScreen: React.FC<Props> = ({
-  folderId
-}) => {
-
+const NewItemScreen = ({ route }) => {
+  const folderId = route.params.folderId
   const [type, setType] = useState('Folder')
   const [folderName, setFolderName] = useState('')
   const [taskName, setTaskName] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
+
+  const onCreatePress = async () => {
+    if (type == 'Folder') {
+      console.log(folderName, folderId);
+      await insertFolder(folderName, folderId);
+    }
+    else if (type == 'Task') {
+      await insertItem(taskName, taskDescription, folderId);
+    }
+    navigationService.goBack()
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -69,15 +76,7 @@ const NewItemScreen: React.FC<Props> = ({
         {type == 'Task' && <Text>Task description</Text>}
         {type == 'Task' && <TextInput style={styles.inputPickerIOS} value={taskDescription} onChangeText={(value) => { setTaskDescription(value) }}></TextInput>}
 
-        <TouchableOpacity onPress={() => {
-          if(type == 'Folder'){
-            insertFolder(folderName, folderId);
-          }
-          else if(type == 'Task'){
-            insertItem(taskName, taskDescription, folderId);
-          }
-          navigationService.goBack()
-        }} style={styles.button}>
+        <TouchableOpacity onPress={onCreatePress} style={styles.button}>
           <Text>Create</Text>
         </TouchableOpacity>
       </View>

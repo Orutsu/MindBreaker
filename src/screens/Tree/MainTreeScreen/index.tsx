@@ -23,7 +23,6 @@ const TreeMainScreen = () => {
   const [currentFolderId, setCurrentFolderId] = useState<number>(0)
 
   useEffect(() => {
-    
     selectFolders().then((folders) => {
       console.log("All folders")
       console.log(folders);

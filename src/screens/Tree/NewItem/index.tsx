@@ -71,10 +71,10 @@ const NewItemScreen: React.FC<Props> = ({
 
         <TouchableOpacity onPress={() => {
           if(type == 'Folder'){
-            insertFolder(folderName, folderId);
+            insertFolder(folderName, 0);
           }
           else if(type == 'Task'){
-            insertItem(taskName, taskDescription, folderId);
+            insertItem(taskName, taskDescription, 0);
           }
           navigationService.goBack()
         }} style={styles.button}>

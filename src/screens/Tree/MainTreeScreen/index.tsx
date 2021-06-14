@@ -21,9 +21,16 @@ const TreeMainScreen = () => {
   const [foldersList, setFoldersList] = useState<Folder[]>([])
   const [tasksList, setTasksList] = useState<Task[]>([])
   const [currentFolderId, setCurrentFolderId] = useState<number>(0)
+  const [locationFolder, setLocationFolder] = useState<Folder | null>(null)
 
   useEffect(() => {
-    
+    selectFolderById(0).then((folder) => {
+      setLocationFolder(folder)
+    })
+  }, [])
+
+  useEffect(() => {
+
     selectFolders().then((folders) => {
       console.log("All folders")
       console.log(folders);
@@ -42,13 +49,28 @@ const TreeMainScreen = () => {
       setTasksList(tasks);
       console.log(tasks);
     })
+    selectFolderById(currentFolderId).then((folder) => {
+      setLocationFolder(folder)
+    })
   }, [currentFolderId])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Header title="Tree" onPlusPress={() => {
-        navigationService.navigate('Tree', {screen: 'New_Item', params : {folderId : currentFolderId} })
-      }} />
+      {currentFolderId == 0 &&
+        <Header title={locationFolder?.name} onPlusPress={() => {
+          navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
+        }}
+        />
+      }
+      {currentFolderId != 0 &&
+        <Header title={locationFolder?.name} onPlusPress={() => {
+          navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
+        }}
+        onBack={() => {
+          setCurrentFolderId(locationFolder?.locationId)
+        }}
+        />
+      }
       <View style={styles.pageContainer}>
         <FlatList
           data={foldersList}
@@ -70,12 +92,13 @@ const TreeMainScreen = () => {
           style={{ flexGrow: 0 }}
           keyExtractor={(item) => `${item.name}_${item.id}`}
           renderItem={
-            ({item}) => 
-              <TaskItem 
-                taskName={item.name} 
-                style={{marginTop: 1}} 
+            ({ item }) =>
+              <TaskItem
+                id={item.id}
+                taskName={item.name}
+                style={{ marginTop: 1 }}
               />
-          } 
+          }
         />
       </View>
     </SafeAreaView>

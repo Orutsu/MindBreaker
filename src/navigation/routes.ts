@@ -7,6 +7,8 @@ export const DASHBOARD_ROOT_ROUTES = {
 export const TREE_ROUTES = {
   MAIN_TREE: 'Main_Tree',
   NEW_ITEM: 'New_Item',
+  EDIT_TASK: 'Edit_Task',
+  EDIT_FOLDER: 'Edit_Folder',
 } as const;
 
 export const GOAL_ROUTES = {

@@ -76,7 +76,15 @@ const NewItemScreen = ({ route }) => {
         {type == 'Task' && <Text>Task description</Text>}
         {type == 'Task' && <TextInput style={styles.inputPickerIOS} value={taskDescription} onChangeText={(value) => { setTaskDescription(value) }}></TextInput>}
 
-        <TouchableOpacity onPress={onCreatePress} style={styles.button}>
+        <TouchableOpacity onPress={() => {
+          if(type == 'Folder'){
+            insertFolder(folderName, 0);
+          }
+          else if(type == 'Task'){
+            insertItem(taskName, taskDescription, 0);
+          }
+          navigationService.goBack()
+        }} style={styles.button}>
           <Text>Create</Text>
         </TouchableOpacity>
       </View>

@@ -1,5 +1,30 @@
 import { db, Folder } from '../index'
 
+
+
+ const insertRootFolder = () => {
+  const promise = new Promise((resolve: (id: number) => void, reject) => {
+    selectFolderById(0).then((folder) => {
+      if(folder == undefined){
+        db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
+          tx.executeSql(
+            "INSERT INTO foldersTree(id, name, locationId) VALUES(0, 'Root', null)",
+            [],
+            (_: any, result: { insertId: number }) => {
+              resolve(result.insertId)
+            },
+            (_: any, err: any) => {
+              reject(err)
+              return false
+            }
+          )
+        })
+      }
+    })
+  })
+  return promise
+}
+
 /**
  * @param name  name of folder
  * @param locationId id of parent folder. If 0 then root folder
@@ -251,7 +276,6 @@ function selectFoldersByLocation(locationId: number) {
         },
         (_: any, err: any) => {
           reject(err)
-          console.log('ssssss')
           return false
         }
       )
@@ -262,6 +286,7 @@ function selectFoldersByLocation(locationId: number) {
 
 
 export {
+  insertRootFolder,
   insertFolder,
   updateFolderName,
   updateFolderLocation,

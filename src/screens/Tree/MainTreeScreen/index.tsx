@@ -58,12 +58,7 @@ const TreeMainScreen = () => {
             ({ item }) =>
               <FolderItem
                 onItemPress={() => {
-                  selectFoldersByLocation(item.id).then((folders) => {
-                    setFoldersList(folders);
-                  })
-                  insertItem("Random task", "ssss", null).then((insertedId) => {
-                    console.log(insertedId)
-                  })
+                  setCurrentFolderId(item.id)
                 }}
                 folderName={item.name}
                 style={{ marginTop: 1 }}

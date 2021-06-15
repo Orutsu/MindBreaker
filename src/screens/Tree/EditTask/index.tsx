@@ -2,56 +2,48 @@ import React, { useEffect, useState } from 'react';
 // Components
 import { SafeAreaView, Text, TextInput, TouchableOpacity, FlatList, View } from 'react-native';
 import Header from '../../../components/Header';
-import FolderItem from '../../../components/FolderItem';
 
-// Database
-import { insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
-import { insertItem, selectItems } from '../../../database/actions/items';
-
-// Types
-import { Folder, Task } from '../../../database';
-
-// Styles
-import styles from './styles';
-import { StyleSheet } from 'react-native'
-
+// Libs && Utills
 import navigationService from '../../../navigation/navigationService';
 
-import RNPickerSelect from 'react-native-picker-select';
+// Database
+import { updateItemName, updateItemDescription } from '../../../database/actions/items';
 
-let itemTypes = [
-  {
-    label: 'Folder',
-    value: 'Folder',
-  },
-  {
-    label: 'Task',
-    value: 'Task',
-  },
-]
+// Types
+import { Task } from '../../../database';
 
-interface Props {
-    taskId: number
-}
+// Styles
+import { positionHelpers, spacingHelpers } from '../../../styles';
+import styles from './styles';
 
-const EditTaskScreen: React.FC<Props> = ({
-  taskId
-}) => {
+const EditTaskScreen = ({route}) => {
+  const task: Task = route.params.taskToEdit
+  const [taskName, setTaskName] = useState(task.name)
+  const [taskDescription, setTaskDescription] = useState(task.description)
 
-  const [taskName, setTaskName] = useState('')
-  const [taskDescription, setTaskDescription] = useState('')
+  const onEditScreen = () => {
+    updateItemName(task.id, taskName)
+    updateItemDescription(task.id, taskDescription)
+    navigationService.goBack()
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Header title="Edit task" onBack={() => {
         navigationService.goBack()
       }} />
-
+      <View style={styles.pageContainer}>
+        <Text style={styles.inputTitle}>Task name:</Text>
+        <TextInput placeholder={'Task name'} style={[styles.inputPickerIOS, spacingHelpers.mT10]} value={taskName} onChangeText={(value) => { setTaskName(value) }} />
+        <Text style={styles.inputTitle}>Task description:</Text>
+        <TextInput placeholder={'Task description'} style={[styles.inputPickerIOS, spacingHelpers.mT10]} value={taskDescription} onChangeText={(value) => { setTaskDescription(value) }} />
+        <TouchableOpacity onPress={onEditScreen} style={[styles.button, positionHelpers.center, spacingHelpers.mT20]}>
+          <Text style={styles.buttonText}>Edit</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 
-
 export default EditTaskScreen;
-

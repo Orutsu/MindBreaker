@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 // Components
-import { SafeAreaView, FlatList, View } from 'react-native';
+import { SafeAreaView, FlatList, View, Alert } from 'react-native';
 import Header from '../../../components/Header';
 import FolderItem from '../../../components/FolderItem';
 import TaskItem from '../../../components/TaskItem';
@@ -21,7 +21,8 @@ import styles from './styles';
 
 
 
-const TreeMainScreen = () => {
+const TreeMainScreen = ({ isArchived }) => {
+
   const isFocused = useIsFocused()
   const [foldersList, setFoldersList] = useState<Folder[]>([])
   const [tasksList, setTasksList] = useState<Task[]>([])
@@ -34,7 +35,9 @@ const TreeMainScreen = () => {
       setFoldersList(folders);
     })
     selectItemsFromFolder(currentFolderId).then((tasks) => {
-      setTasksList(tasks);
+      isArchived
+        ? setTasksList(tasks.filter(task => task.isArchived))
+        : setTasksList(tasks);
     })
     selectFolderById(currentFolderId).then((folder) => {
       setLocationFolder(folder)
@@ -42,38 +45,61 @@ const TreeMainScreen = () => {
   }
 
   useEffect(() => {
-    // selectFolders().then((folders) => {
-    //   // console.log("All folders")
-    //   // console.log(folders);
-    // })
-    // selectItems().then((tasks) => {
-    //   // console.log("All tasks")
-    //   // console.log(tasks);
-    // })
+    selectFolders().then((folders) => {
+      console.log("All folders")
+      console.log(folders);
+    })
+    selectItems().then((tasks) => {
+      console.log("All tasks")
+      console.log(tasks);
+    })
     fetchFoldersAndItems()
   }, [currentFolderId, isFocused])
 
+  const headetTitle = isArchived
+    ? `Archived(${locationFolder?.name})`
+    : locationFolder?.name
+
+
+  const renderHeader = () => {
+    if (currentFolderId == 0 && isArchived == 'true') {
+      return <Header
+        title={headetTitle}
+      />
+    }
+    if (currentFolderId != 0 && isArchived == 'true') {
+      return <Header
+        title={headetTitle}
+        onBack={() => {
+          setCurrentFolderId(locationFolder?.locationId)
+        }}
+      />
+    }
+    // tree(not archived)
+    if (currentFolderId == 0) {
+      return <Header
+        title={headetTitle}
+        onPlusPress={() => {
+          navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
+        }}
+      />
+    }
+    if (currentFolderId != 0) {
+      return <Header
+        title={headetTitle}
+        onPlusPress={() => {
+          navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
+        }}
+        onBack={() => {
+          setCurrentFolderId(locationFolder?.locationId)
+        }}
+      />
+    }
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {currentFolderId == 0 &&
-        <Header 
-          title={locationFolder?.name} 
-          onPlusPress={() => {
-            navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
-          }}
-        />
-      }
-      {currentFolderId != 0 &&
-        <Header 
-          title={locationFolder?.name} 
-          onPlusPress={() => {
-            navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId }})
-          }}
-          onBack={() => {
-            setCurrentFolderId(locationFolder?.locationId)
-          }}
-        />
-      }
+      {renderHeader()}
       <View style={styles.pageContainer}>
         <FlatList
           data={foldersList}
@@ -86,8 +112,24 @@ const TreeMainScreen = () => {
                   setCurrentFolderId(item.id)
                 }}
                 onDeletePress={() => {
-                  deleteFolder(item.id)
-                  fetchFoldersAndItems()
+                  Alert.alert(
+                    `Deleting folder ${item.name}`,
+                    "All tasks inside folder will be deleted. Are you sure you want to delete folder?",
+                    [
+                      {
+                        text: "Yes, delete.",
+                        onPress: () => {
+                          deleteFolder(item.id)
+                          fetchFoldersAndItems()
+                        },
+                        style: "default"
+                      },
+                      {
+                        text: "Cancel", onPress: () => console.log("OK Pressed"),
+                        style: "cancel"
+                      }
+                    ]
+                  );
                 }}
                 onEditPress={() => {
                   navigationService.navigate('Tree', {
@@ -113,6 +155,14 @@ const TreeMainScreen = () => {
                 onDeletePress={() => {
                   deleteItem(item.id)
                   fetchFoldersAndItems()
+                }}
+                onEditPress={() => {
+                  navigationService.navigate('Tree', {
+                    screen: 'Edit_Task',
+                    params: {
+                      taskToEdit: item
+                    }
+                  })
                 }}
                 style={{ marginTop: 1 }}
               />

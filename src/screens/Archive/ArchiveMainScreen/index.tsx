@@ -3,14 +3,11 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, Text } from 'react-native';
 import Header from '../../../components/Header';
 
+import TreeMainScreen from '../../Tree/MainTreeScreen'
+
 const ArchiveMainScreen = () => {
   return (
-    <SafeAreaView>
-      <Header title="Archive" />
-      <Text style={{marginTop: 20}}>
-      ArchiveMainScreen
-      </Text>
-    </SafeAreaView>
+    <TreeMainScreen isArchived = 'true' />
   );
 };
 

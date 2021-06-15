@@ -58,7 +58,7 @@ const createFoldersTreeTable = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void; }) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS foldersTree (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, locationId INTEGER, FOREIGN KEY(locationId) REFERENCES foldersTree(id))",
+        "CREATE TABLE IF NOT EXISTS foldersTree (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, locationId INTEGER, CONSTRAINT fk_folders FOREIGN KEY(locationId) REFERENCES foldersTree(id) ON DELETE CASCADE)",
         [],
         (_: any, result: any) => {
           resolve("FoldersTree table created")
@@ -77,7 +77,7 @@ const createItemsTable = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx: { executeSql: (arg0: string, arg1: never[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void; }) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, isArchived BOOLEAN NOT NULL, folderId INTEGER, lastDateLearned DATE, learnedWithoutSkip number NOT NULL, FOREIGN KEY(folderId) REFERENCES foldersTree(id))",
+        "CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, isArchived BOOLEAN NOT NULL, folderId INTEGER, lastDateLearned DATE, learnedWithoutSkip number NOT NULL, CONSTRAINT fk_items FOREIGN KEY(folderId) REFERENCES foldersTree(id) ON DELETE CASCADE)",
         [],
         (_: any, result: any) => {
           resolve("Items table created")

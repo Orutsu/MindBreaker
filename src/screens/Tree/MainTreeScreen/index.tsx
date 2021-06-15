@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 // Components
 import { SafeAreaView, FlatList, View } from 'react-native';
 import Header from '../../../components/Header';
 import FolderItem from '../../../components/FolderItem';
 import TaskItem from '../../../components/TaskItem';
 
+// Libs && Utills
+import navigationService from '../../../navigation/navigationService';
+import { useIsFocused } from '@react-navigation/native';
+
 // Database
-import { insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
-import { insertItem, selectItems, selectItemsFromFolder } from '../../../database/actions/items';
+import { deleteFolder, insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
+import { deleteItem, insertItem, selectItems, selectItemsFromFolder } from '../../../database/actions/items';
 
 // Types
 import { Folder, Task } from '../../../database';
@@ -15,53 +19,59 @@ import { Folder, Task } from '../../../database';
 // Styles
 import styles from './styles';
 
-import navigationService from '../../../navigation/navigationService';
+
 
 const TreeMainScreen = () => {
+  const isFocused = useIsFocused()
   const [foldersList, setFoldersList] = useState<Folder[]>([])
   const [tasksList, setTasksList] = useState<Task[]>([])
   const [currentFolderId, setCurrentFolderId] = useState<number>(0)
-  const [locationFolder, setLocationFolder] = useState<Folder | null>(null)
+  const [locationFolder, setLocationFolder] = useState();
 
-  useEffect(() => {
-    selectFolders().then((folders) => {
-      console.log("All folders")
-      console.log(folders);
-    })
-    selectItems().then((tasks) => {
-      console.log("All tasks")
-      console.log(tasks);
-    })
+  const fetchFoldersAndItems = async () => {
+    console.log('kek')
     selectFoldersByLocation(currentFolderId).then((folders) => {
-      console.log("Current folders")
       setFoldersList(folders);
-      console.log(folders);
     })
     selectItemsFromFolder(currentFolderId).then((tasks) => {
-      console.log("Current tasks")
       setTasksList(tasks);
-      console.log(tasks);
     })
     selectFolderById(currentFolderId).then((folder) => {
       setLocationFolder(folder)
     })
-  }, [currentFolderId])
+  }
+
+  useEffect(() => {
+    // selectFolders().then((folders) => {
+    //   // console.log("All folders")
+    //   // console.log(folders);
+    // })
+    // selectItems().then((tasks) => {
+    //   // console.log("All tasks")
+    //   // console.log(tasks);
+    // })
+    fetchFoldersAndItems()
+  }, [currentFolderId, isFocused])
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {currentFolderId == 0 &&
-        <Header title={locationFolder?.name} onPlusPress={() => {
-          navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
-        }}
+        <Header 
+          title={locationFolder?.name} 
+          onPlusPress={() => {
+            navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
+          }}
         />
       }
       {currentFolderId != 0 &&
-        <Header title={locationFolder?.name} onPlusPress={() => {
-          navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId } })
-        }}
-        onBack={() => {
-          setCurrentFolderId(locationFolder?.locationId)
-        }}
+        <Header 
+          title={locationFolder?.name} 
+          onPlusPress={() => {
+            navigationService.navigate('Tree', { screen: 'New_Item', params: { folderId: currentFolderId }})
+          }}
+          onBack={() => {
+            setCurrentFolderId(locationFolder?.locationId)
+          }}
         />
       }
       <View style={styles.pageContainer}>
@@ -72,9 +82,20 @@ const TreeMainScreen = () => {
           renderItem={
             ({ item }) =>
               <FolderItem
-                id={item.id}
                 onItemPress={() => {
                   setCurrentFolderId(item.id)
+                }}
+                onDeletePress={() => {
+                  deleteFolder(item.id)
+                  fetchFoldersAndItems()
+                }}
+                onEditPress={() => {
+                  navigationService.navigate('Tree', {
+                    screen: 'Edit_Folder',
+                    params: {
+                      folderToEdit: item
+                    }
+                  })
                 }}
                 folderName={item.name}
                 style={{ marginTop: 1 }}
@@ -88,8 +109,11 @@ const TreeMainScreen = () => {
           renderItem={
             ({ item }) =>
               <TaskItem
-                id={item.id}
                 taskName={item.name}
+                onDeletePress={() => {
+                  deleteItem(item.id)
+                  fetchFoldersAndItems()
+                }}
                 style={{ marginTop: 1 }}
               />
           }

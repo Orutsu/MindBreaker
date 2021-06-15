@@ -47,7 +47,10 @@ const HomeTabBar = () => {
     'Main_Tree',
   );
 
-  if (!isVisible) {
+  console.log('activeRouteName', activeRouteName)
+  
+  // Думаю що при створенні айтему краще не показувати сторінку NewItem і EditItem але це вже на твій вибір, поміняй еслі хочеш
+  if (!isVisible || activeRouteName === 'New_Item' || activeRouteName === 'Edit_Folder') {
     return null;
   }
 

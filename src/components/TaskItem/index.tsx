@@ -10,7 +10,6 @@ import {
 import Swipeable from 'react-native-swipeable';
 import { MaterialCommunityIcons, Entypo, EvilIcons } from '@expo/vector-icons';
 
-import {deleteItem} from '../../database/actions/items'
 // Types
 import { Task } from '../../database';
 
@@ -21,31 +20,33 @@ import styles from './styles'
 import navigationService from '../../navigation/navigationService';
 
 interface Props {
-  id: number
   style?: ViewStyle | ViewStyle[]
   taskName?: string
   onItemPress?: () => void
+  onDeletePress?: () => void
+  onEditPress?: () => void
 }
 
 
 const TaskItem: React.FC<Props> = ({
-  id,
   style,
   taskName,
   onItemPress,
+  onDeletePress,
+  onEditPress,
 }) => {
 
   const rightButtons = [
     <TouchableOpacity
       style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_RED }]}
-      onPress={() => deleteItem(id)}
+      onPress={() => onDeletePress && onDeletePress()}
     >
       <EvilIcons name="trash" size={40} color="#EE4B2B" />
       <Text style={{ fontSize: 12, color: '#EE4B2B' }}>Delete</Text>
     </TouchableOpacity>,
     <TouchableOpacity
       style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_BLUE }]}
-      onPress={() => navigationService.navigate('Tree', {screen: 'Edit_Task', params : {taskId : id} })}
+      onPress={() => onEditPress && onEditPress()}
     >
       <EvilIcons name="pencil" size={40} color="#0047AB" />
       <Text style={{ fontSize: 12, marginLeft: -2, color: '#0047AB' }}>Edit</Text>

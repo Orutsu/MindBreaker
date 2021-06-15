@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 // Components
 import { SafeAreaView, Text, TextInput, TouchableOpacity, FlatList, View } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import Header from '../../../components/Header';
-import FolderItem from '../../../components/FolderItem';
+import { AntDesign } from '@expo/vector-icons';
 
 // Libs && Utills
 import navigationService from '../../../navigation/navigationService';
@@ -17,11 +18,9 @@ import { Folder, Task } from '../../../database';
 // Styles
 import styles from './styles';
 import { StyleSheet } from 'react-native'
+import { positionHelpers, spacingHelpers } from '../../../styles';
 
-
-import RNPickerSelect from 'react-native-picker-select';
-
-let itemTypes = [
+const itemTypes = [
   {
     label: 'Folder',
     value: 'Folder',
@@ -34,14 +33,13 @@ let itemTypes = [
 
 const NewItemScreen = ({ route }) => {
   const folderId = route.params.folderId
-  const [type, setType] = useState('Folder')
+  const [type, setType] = useState(null)
   const [folderName, setFolderName] = useState('')
   const [taskName, setTaskName] = useState('')
   const [taskDescription, setTaskDescription] = useState('')
 
   const onCreatePress = async () => {
     if (type == 'Folder') {
-      console.log(folderName, folderId);
       await insertFolder(folderName, folderId);
     }
     else if (type == 'Task') {
@@ -55,38 +53,38 @@ const NewItemScreen = ({ route }) => {
       <Header title="New item" onBack={() => {
         navigationService.goBack()
       }} />
-      <Text>type</Text>
       <View style={styles.pageContainer}>
         <RNPickerSelect
           style={{ ...pickerSelectStyles }}
+          placeholder={{
+            label: 'Select a type of added item...',
+            value: null,
+          }}
           items={itemTypes}
           onValueChange={(value) => {
             setType(value)
           }}
+          useNativeAndroidPickerStyle={false}
+          Icon={() => <AntDesign name="downcircleo" size={20} color="grey" style={styles.pickerIconPosition} />}
           value={type}
         />
-        {type == 'Folder' && <Text>Folder name</Text>}
-        {type == 'Folder' && <TextInput style={styles.inputPickerIOS} value={folderName} onChangeText={(value) => { setFolderName(value) }}></TextInput>}
-
-
-        {type == 'Task' && <Text>Task name</Text>}
-        {type == 'Task' && <TextInput style={styles.inputPickerIOS} value={taskName} onChangeText={(value) => { setTaskName(value) }}></TextInput>}
-
-
-        {type == 'Task' && <Text>Task description</Text>}
-        {type == 'Task' && <TextInput style={styles.inputPickerIOS} value={taskDescription} onChangeText={(value) => { setTaskDescription(value) }}></TextInput>}
-
-        <TouchableOpacity onPress={() => {
-          if(type == 'Folder'){
-            insertFolder(folderName, 0);
-          }
-          else if(type == 'Task'){
-            insertItem(taskName, taskDescription, 0);
-          }
-          navigationService.goBack()
-        }} style={styles.button}>
-          <Text>Create</Text>
-        </TouchableOpacity>
+        <View style={styles.separatorLine} />
+        {type == 'Folder' && 
+          <>
+            <TextInput placeholder={'Folder name'} style={[styles.inputPickerIOS, spacingHelpers.mT20]} value={folderName} onChangeText={(value) => { setFolderName(value) }} />
+          </>
+        }
+        {type == 'Task' && 
+          <> 
+            <TextInput placeholder={'Task name'} style={[styles.inputPickerIOS, spacingHelpers.mT20]} value={taskName} onChangeText={(value) => { setTaskName(value) }} />
+            <TextInput placeholder={'Task description'} style={[styles.inputPickerIOS, spacingHelpers.mT20]} value={taskDescription} onChangeText={(value) => { setTaskDescription(value) }}></TextInput>
+          </>
+        }
+        {type !== null && 
+          <TouchableOpacity onPress={onCreatePress} style={[styles.button, positionHelpers.center, spacingHelpers.mT20]}>
+            <Text style={styles.buttonText}>Create</Text>
+          </TouchableOpacity>
+        }
       </View>
     </SafeAreaView>
   );
@@ -105,8 +103,20 @@ const pickerSelectStyles = StyleSheet.create({
     paddingBottom: 12,
     borderWidth: 1,
     borderColor: 'gray',
-    borderRadius: 4,
+    borderRadius: 10,
     backgroundColor: 'white',
     color: 'black',
+  },
+  inputAndroid: {
+    height: 50,
+    fontSize: 17,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 10,
+    backgroundColor: 'white',
+    color: 'black',
+    justifyContent:'center',
+    alignItems: 'center',
   },
 });

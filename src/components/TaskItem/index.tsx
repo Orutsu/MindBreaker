@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 // Components
 import {
   View,
@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TouchableHighlight,
   TouchableOpacity,
+  LayoutAnimation
 } from 'react-native'
 import Swipeable from 'react-native-swipeable';
 import { MaterialCommunityIcons, Entypo, EvilIcons } from '@expo/vector-icons';
@@ -21,20 +22,31 @@ import navigationService from '../../navigation/navigationService';
 
 interface Props {
   style?: ViewStyle | ViewStyle[]
+  taskId?: number
   taskName?: string
-  onItemPress?: () => void
+  taskDescription?: string
   onDeletePress?: () => void
   onEditPress?: () => void
+  isOpen : boolean,
+  setIsOpen?: (id:number) => void
 }
 
 
 const TaskItem: React.FC<Props> = ({
   style,
+  taskId,
   taskName,
-  onItemPress,
+  taskDescription,
   onDeletePress,
   onEditPress,
+  isOpen,
+  setIsOpen
 }) => {
+
+  const onPress = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsOpen(isOpen ? null: taskId);
+  };
 
   const rightButtons = [
     <TouchableOpacity
@@ -56,16 +68,25 @@ const TaskItem: React.FC<Props> = ({
   return (
     <Swipeable rightButtons={rightButtons} >
       <TouchableOpacity
-        style={[styles.itemContainer, positionHelpers.rowStart, style]}
-        onPress={() => onItemPress && onItemPress()}
+        style={[styles.itemContainer, positionHelpers.alighStart, style]}
+        onPress={onPress}
       >
-        <View style={styles.iconContainer}>
-          <MaterialCommunityIcons name="target-variant" size={24} color="white" />
+        <View style={styles.mainContainer}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="target-variant" size={24} color="white" />
+          </View>
+          <Text style={styles.optionsText}>{taskName}</Text>
         </View>
-        <Text style={styles.optionsText}>{taskName}</Text>
+        {isOpen && (
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.optionsText}>{taskDescription}</Text>
+        </View>)
+      }
       </TouchableOpacity>
-    </Swipeable>
+
+    </Swipeable >
   )
 }
+
 
 export default TaskItem

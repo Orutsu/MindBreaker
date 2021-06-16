@@ -3,11 +3,9 @@ import { COLORS } from '../../styles';
 
 export default StyleSheet.create({
   itemContainer: {
-    height: 60,
     width: '100%',
     backgroundColor: COLORS.WHITE,
     justifyContent: 'center',
-    paddingLeft: 20,
   },
   iconContainer: {
     height: 30,
@@ -33,4 +31,19 @@ export default StyleSheet.create({
     width: 75,
     alignItems: 'center',
   },
+  mainContainer: {
+    paddingLeft: 20,
+    height: 60,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  descriptionContainer: {
+    width: '100%',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 5,
+  }
 });

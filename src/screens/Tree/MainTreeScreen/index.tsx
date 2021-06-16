@@ -28,6 +28,11 @@ const TreeMainScreen = ({ isArchived }) => {
   const [tasksList, setTasksList] = useState<Task[]>([])
   const [currentFolderId, setCurrentFolderId] = useState<number>(0)
   const [locationFolder, setLocationFolder] = useState();
+  const [openTask, setOpenTask] = useState(null);
+
+  const setOpenTaskHandler = (taskId)=> {
+    setOpenTask(taskId)
+  }
 
   const fetchFoldersAndItems = async () => {
     console.log('kek')
@@ -99,7 +104,7 @@ const TreeMainScreen = ({ isArchived }) => {
   const foldersListWithTypes = foldersList.map(item => { return { ...item, type: 'folder' } })
   const tasksListWithTypes = tasksList.map(item => { return { ...item, type: 'task' } })
   const itemsList = [...foldersListWithTypes, ...tasksListWithTypes]
-  const renderFolderItem = ({item}) => {
+  const renderFolder = ({item}) => {
     console.log("item")
     console.log(item)
     if (item.type == 'folder') {
@@ -142,6 +147,7 @@ const TreeMainScreen = ({ isArchived }) => {
     if (item.type == 'task') {
       return <TaskItem
         taskName={item.name}
+        taskDescription={item.description}
         onDeletePress={() => {
           deleteItem(item.id)
           fetchFoldersAndItems()
@@ -154,6 +160,9 @@ const TreeMainScreen = ({ isArchived }) => {
             }
           })
         }}
+        isOpen = {openTask == item.id}
+        setIsOpen = {setOpenTaskHandler}
+        taskId = {item.id}
         style={{ marginTop: 1 }}
       />
     }
@@ -165,7 +174,7 @@ const TreeMainScreen = ({ isArchived }) => {
         <FlatList
           data={itemsList}
           keyExtractor={(item) => `${item.name}_${item.id}`}
-          renderItem={renderFolderItem}
+          renderItem={renderFolder}
         />
       </View>
     </SafeAreaView>

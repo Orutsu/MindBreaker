@@ -96,77 +96,76 @@ const TreeMainScreen = ({ isArchived }) => {
       />
     }
   }
-
+  const foldersListWithTypes = foldersList.map(item => { return { ...item, type: 'folder' } })
+  const tasksListWithTypes = tasksList.map(item => { return { ...item, type: 'task' } })
+  const itemsList = [...foldersListWithTypes, ...tasksListWithTypes]
+  const renderFolderItem = ({item}) => {
+    console.log("item")
+    console.log(item)
+    if (item.type == 'folder') {
+      return <FolderItem
+        onItemPress={() => {
+          setCurrentFolderId(item.id)
+        }}
+        onDeletePress={() => {
+          Alert.alert(
+            `Deleting folder ${item.name}`,
+            "All tasks inside folder will be deleted. Are you sure you want to delete folder?",
+            [
+              {
+                text: "Yes, delete.",
+                onPress: () => {
+                  deleteFolder(item.id)
+                  fetchFoldersAndItems()
+                },
+                style: "default"
+              },
+              {
+                text: "Cancel", onPress: () => console.log("OK Pressed"),
+                style: "cancel"
+              }
+            ]
+          );
+        }}
+        onEditPress={() => {
+          navigationService.navigate('Tree', {
+            screen: 'Edit_Folder',
+            params: {
+              folderToEdit: item
+            }
+          })
+        }}
+        folderName={item.name}
+        style={{ marginTop: 1 }}
+      />
+    }
+    if (item.type == 'task') {
+      return <TaskItem
+        taskName={item.name}
+        onDeletePress={() => {
+          deleteItem(item.id)
+          fetchFoldersAndItems()
+        }}
+        onEditPress={() => {
+          navigationService.navigate('Tree', {
+            screen: 'Edit_Task',
+            params: {
+              taskToEdit: item
+            }
+          })
+        }}
+        style={{ marginTop: 1 }}
+      />
+    }
+  }
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {renderHeader()}
       <View style={styles.pageContainer}>
         <FlatList
-          data={foldersList}
-          style={{ flexGrow: 0 }}
+          data={itemsList}
           keyExtractor={(item) => `${item.name}_${item.id}`}
-          renderItem={
-            ({ item }) =>
-              <FolderItem
-                onItemPress={() => {
-                  setCurrentFolderId(item.id)
-                }}
-                onDeletePress={() => {
-                  Alert.alert(
-                    `Deleting folder ${item.name}`,
-                    "All tasks inside folder will be deleted. Are you sure you want to delete folder?",
-                    [
-                      {
-                        text: "Yes, delete.",
-                        onPress: () => {
-                          deleteFolder(item.id)
-                          fetchFoldersAndItems()
-                        },
-                        style: "default"
-                      },
-                      {
-                        text: "Cancel", onPress: () => console.log("OK Pressed"),
-                        style: "cancel"
-                      }
-                    ]
-                  );
-                }}
-                onEditPress={() => {
-                  navigationService.navigate('Tree', {
-                    screen: 'Edit_Folder',
-                    params: {
-                      folderToEdit: item
-                    }
-                  })
-                }}
-                folderName={item.name}
-                style={{ marginTop: 1 }}
-              />
-          }
-        />
-        <FlatList
-          data={tasksList}
-          style={{ flexGrow: 0 }}
-          keyExtractor={(item) => `${item.name}_${item.id}`}
-          renderItem={
-            ({ item }) =>
-              <TaskItem
-                taskName={item.name}
-                onDeletePress={() => {
-                  deleteItem(item.id)
-                  fetchFoldersAndItems()
-                }}
-                onEditPress={() => {
-                  navigationService.navigate('Tree', {
-                    screen: 'Edit_Task',
-                    params: {
-                      taskToEdit: item
-                    }
-                  })
-                }}
-                style={{ marginTop: 1 }}
-              />
-          }
+          renderItem={renderFolderItem}
         />
       </View>
     </SafeAreaView>

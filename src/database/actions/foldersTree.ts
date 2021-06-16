@@ -20,6 +20,7 @@ import { db, Folder } from '../index'
           )
         })
       }
+      resolve(null)
     })
   })
   return promise

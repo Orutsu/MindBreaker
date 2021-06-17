@@ -13,6 +13,7 @@ import { updateFolderName } from '../../../database/actions/foldersTree';
 import { Folder } from '../../../database';
 
 // Styles
+
 import { positionHelpers, spacingHelpers } from '../../../styles';
 import styles from './styles';
 

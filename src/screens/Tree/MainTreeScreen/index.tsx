@@ -22,7 +22,6 @@ import styles from './styles';
 
 
 const TreeMainScreen = ({ isArchived }) => {
-
   const isFocused = useIsFocused()
   const [foldersList, setFoldersList] = useState<Folder[]>([])
   const [tasksList, setTasksList] = useState<Task[]>([])
@@ -105,8 +104,6 @@ const TreeMainScreen = ({ isArchived }) => {
   const tasksListWithTypes = tasksList.map(item => { return { ...item, type: 'task' } })
   const itemsList = [...foldersListWithTypes, ...tasksListWithTypes]
   const renderFolder = ({item}) => {
-    console.log("item")
-    console.log(item)
     if (item.type == 'folder') {
       return <FolderItem
         onItemPress={() => {

@@ -13,6 +13,7 @@ export const TREE_ROUTES = {
 
 export const GOAL_ROUTES = {
   MAIN_GOAL: 'Main_Goal',
+  TASK_ACTIONS: 'Task_Actions',
 } as const;
 
 export const ARCHIVE_ROUTES = {

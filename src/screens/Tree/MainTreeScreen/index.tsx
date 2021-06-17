@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView, FlatList, View, Alert } from 'react-native';
 import Header from '../../../components/Header';
 import FolderItem from '../../../components/FolderItem';
-import TaskItem from '../../../components/TaskItem';
+import ExpandingTaskItem from '../../../components/ExpandingTaskItem';
 
 // Libs && Utills
 import navigationService from '../../../navigation/navigationService';
@@ -142,7 +142,7 @@ const TreeMainScreen = ({ isArchived }) => {
       />
     }
     if (item.type == 'task') {
-      return <TaskItem
+      return <ExpandingTaskItem
         taskName={item.name}
         taskDescription={item.description}
         onDeletePress={() => {

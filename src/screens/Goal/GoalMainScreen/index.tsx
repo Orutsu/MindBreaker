@@ -16,11 +16,6 @@ const GoalMainScreen = () => {
   const isFocused = useIsFocused()
   const [foldersList, setFoldersList] = useState<Folder[]>([])
   const [tasksList, setTasksList] = useState<Task[]>([])
-  const [openTask, setOpenTask] = useState(-1);
-
-  const setOpenTaskHandler = (taskId: number)=> {
-    setOpenTask(taskId)
-  }
 
   const fetchFoldersAndItems = async () => {
     selectFolders().then((folders) => {
@@ -32,19 +27,19 @@ const GoalMainScreen = () => {
       setTasksList(tasks);
     })
   }
-  
+
   // Діма вибач за код нижче, він просто існує. Не рухай його, і він не буде рухати тебе)00)
   const processedList = useMemo(() => {
     if (tasksList.length === 0 || foldersList.length === 0) {
       return []
     }
-    let newList: any[] = foldersList 
+    let newList: any[] = foldersList
     newList = foldersList.map((item) => {
       let taskInFolder: Task[] = [];
       taskInFolder = tasksList.filter((task) => task.folderId === item.id)
-      return Object.assign(item, {taskInFolder: [...taskInFolder]})
+      return Object.assign(item, { taskInFolder: [...taskInFolder] })
     })
-  
+
     return newList.filter((item) => item.taskInFolder.length > 0);
   }, [tasksList, foldersList])
 
@@ -56,40 +51,27 @@ const GoalMainScreen = () => {
 
   return (
     <SafeAreaView>
-      <Header title="Goal"/>
-      <FlatList 
-        data={processedList} 
-        renderItem={({item}) => {
+      <Header title="Goal" />
+      <FlatList
+        style={{marginBottom: 60}}
+        data={processedList}
+        renderItem={({ item }) => {
           return (
             <>
-              <View style={[positionHelpers.rowStart, spacingHelpers.mT10, spacingHelpers]}>
+              <View style={[positionHelpers.rowStart, spacingHelpers.mT10]}>
                 <View style={styles.iconContainer}>
                   <Entypo name="folder" size={30} color="#fceea7" />
                 </View>
                 <Text style={[styles.labelText, spacingHelpers.mL5]}>{item.name}</Text>
               </View>
-              <View style={styles.separatorLine}/>
+              <View style={styles.separatorLine} />
               {item.taskInFolder.map((item) => {
                 return (
                   <TaskItem
-                      taskDescription={item.description}
-                      onDeletePress={() => {
-                        deleteItem(item.id)
-                        fetchFoldersAndItems()
-                      }}
-                      onEditPress={() => {
-                        navigationService.navigate('Tree', {
-                          screen: 'Edit_Task',
-                          params: {
-                            taskToEdit: item
-                          }
-                        })
-                      }}
-                      isOpen = {openTask == item.id}
-                      setIsOpen = {setOpenTaskHandler}
-                      taskId = {item.id}
-                      style={{ marginTop: 1 }}
-                      taskName={item.name} 
+                    taskDescription={item.description}
+                    taskId={item.id}
+                    style={{ marginTop: 1 }}
+                    taskName={item.name}
                   />
                 )
               })}

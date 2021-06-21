@@ -20,7 +20,7 @@ const insertItem = (name: string, description: string, folderId: number) => {
         db.transaction((tx: { executeSql: (arg0: string, arg1: (string | number | null | false)[], arg2: (_: any, result: any) => void, arg3: (_: any, err: any) => boolean) => void }) => {
             tx.executeSql(
                 "INSERT INTO items(name, description, folderId, lastDateLearned, learnedWithoutSkip, isArchived, isGoalForToday) VALUES(?, ?, ?, NULL, 0, ?, ?)",
-                [name, description, folderId, false, false],
+                [name, description, folderId, false, true],
                 (_: any, result: { insertId: unknown }) => {
                     resolve(result.insertId)
                 },
@@ -402,6 +402,7 @@ export {
     updateItemFolderId,
     updateItemIsArchived,
     updateItemLastDateLearned,
+    updateItemIsGoalForToday,
     updateItemLearnedWithoutSkip,
     deleteItem,
     selectItems,

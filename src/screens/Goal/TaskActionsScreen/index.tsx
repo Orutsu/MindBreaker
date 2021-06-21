@@ -5,7 +5,7 @@ import { FlatList, SafeAreaView, Text, View, ViewStyle, TouchableOpacity } from 
 import Header from '../../../components/Header';
 import { Folder, Task } from '../../../database';
 import { selectFolders } from '../../../database/actions/foldersTree';
-import { deleteItem, selectItems, selectItemsFromFolder } from '../../../database/actions/items';
+import { deleteItem, selectItems, selectItemsFromFolder, updateItemIsGoalForToday, updateItemIsArchived } from '../../../database/actions/items';
 import navigationService from '../../../navigation/navigationService';
 import { positionHelpers, spacingHelpers } from '../../../styles';
 import { Entypo, Feather, EvilIcons } from '@expo/vector-icons';
@@ -27,6 +27,17 @@ const TaskActionsScreen: React.FC<Props> = ({ route }) => {
         taskDescription
     } = route.params;
 
+    const refreshedHandler = () => {
+        updateItemIsGoalForToday(taskId, false);
+        // more complex logic
+        updateItemIsArchived(taskId, true);
+        navigationService.goBack()
+    }
+    const skippedHandler = () => {
+        updateItemIsGoalForToday(taskId, false);
+        navigationService.goBack()
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header title="Action task" onBack={() => {
@@ -38,10 +49,10 @@ const TaskActionsScreen: React.FC<Props> = ({ route }) => {
                     <Text style={styles.descriptionItem}>{taskDescription}</Text>
                 </View>
                 <View style={styles.separatorLine} />
-                <TouchableOpacity style={[styles.button, positionHelpers.center, spacingHelpers.mT20, {backgroundColor : 'yellow'}]}>
+                <TouchableOpacity onPress={refreshedHandler} style={[styles.button, positionHelpers.center, spacingHelpers.mT20, {backgroundColor : 'yellow'}]}>
                     <Text style={styles.buttonText}>Refreshed</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, positionHelpers.center, spacingHelpers.mT20, {backgroundColor : 'coral'}]}>
+                <TouchableOpacity onPress={skippedHandler} style={[styles.button, positionHelpers.center, spacingHelpers.mT20, {backgroundColor : 'coral'}]}>
                     <Text style={styles.buttonText}>Skipped</Text>
                 </TouchableOpacity>
             </View>

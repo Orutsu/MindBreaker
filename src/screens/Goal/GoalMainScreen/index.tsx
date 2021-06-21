@@ -42,12 +42,18 @@ const GoalMainScreen = () => {
         return newList.filter((item) => item.taskInFolder.length > 0);
     }, [tasksList, foldersList])
 
-    console.log('processedList', processedList)
-
     useEffect(() => {
         fetchFoldersAndItems()
     }, [isFocused])
 
+    if (processedList.length == 0) {
+        return <SafeAreaView>
+            <Header title="Goal" />
+            <View style = {{alignItems : 'center'}}>
+            <Text style = {{fontSize: 20, paddingTop: 30}}>Nothing to refresh today</Text>
+            </View>
+        </SafeAreaView>
+    }
     return (
         <SafeAreaView>
             <Header title="Goal" />

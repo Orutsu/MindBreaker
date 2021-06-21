@@ -10,7 +10,6 @@ import {
 } from 'react-native'
 import Swipeable from 'react-native-swipeable';
 import { MaterialCommunityIcons, Entypo, EvilIcons } from '@expo/vector-icons';
-
 // Types
 import { Task } from '../../database';
 
@@ -27,6 +26,7 @@ interface Props {
   taskDescription?: string
   onDeletePress?: () => void
   onEditPress?: () => void
+  onCancelArchive?: () => void
   isOpen : boolean,
   setIsOpen?: (id:number) => void
 }
@@ -39,6 +39,7 @@ const TaskItem: React.FC<Props> = ({
   taskDescription,
   onDeletePress,
   onEditPress,
+  onCancelArchive,
   isOpen,
   setIsOpen
 }) => {
@@ -48,22 +49,34 @@ const TaskItem: React.FC<Props> = ({
     setIsOpen(isOpen ? null: taskId);
   };
 
-  const rightButtons = [
-    <TouchableOpacity
-      style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_RED }]}
-      onPress={() => onDeletePress && onDeletePress()}
-    >
-      <EvilIcons name="trash" size={40} color="#EE4B2B" />
-      <Text style={{ fontSize: 12, color: '#EE4B2B' }}>Delete</Text>
-    </TouchableOpacity>,
-    <TouchableOpacity
-      style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_BLUE }]}
-      onPress={() => onEditPress && onEditPress()}
-    >
-      <EvilIcons name="pencil" size={40} color="#0047AB" />
-      <Text style={{ fontSize: 12, marginLeft: -2, color: '#0047AB' }}>Edit</Text>
-    </TouchableOpacity>
-  ];
+  const rightButtons = [];
+  if(onDeletePress){
+    rightButtons.push( <TouchableOpacity
+        style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_RED }]}
+        onPress={() => onDeletePress && onDeletePress()}
+      >
+        <EvilIcons name="trash" size={40} color="#EE4B2B" />
+        <Text style={{ fontSize: 12, color: '#EE4B2B' }}>Delete</Text>
+      </TouchableOpacity>)
+  }
+  if(onEditPress){
+    rightButtons.push(    <TouchableOpacity
+        style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_BLUE }]}
+        onPress={() => onEditPress && onEditPress()}
+      >
+        <EvilIcons name="pencil" size={40} color="#0047AB" />
+        <Text style={{ fontSize: 12, marginLeft: -2, color: '#0047AB' }}>Edit</Text>
+      </TouchableOpacity>)
+  }
+  if(onCancelArchive){
+    rightButtons.push(<TouchableOpacity
+        style={[styles.buttonContainer, { backgroundColor: COLORS.LIGHT_BLUE }]}
+        onPress={() => onCancelArchive && onCancelArchive()}
+      >
+        <MaterialCommunityIcons name="progress-alert" size={24} color="#0047AB" />
+        <Text style={{ fontSize: 12, marginLeft: -2, color: '#0047AB' }}>Back to tree</Text>
+      </TouchableOpacity>)
+  }
 
   return (
     <Swipeable rightButtons={rightButtons} >

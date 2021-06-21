@@ -11,7 +11,7 @@ import { useIsFocused } from '@react-navigation/native';
 
 // Database
 import { deleteFolder, insertFolder, selectFolderById, selectFolders, selectFoldersByLocation } from '../../../database/actions/foldersTree'
-import { deleteItem, insertItem, selectItems, selectItemsFromFolder } from '../../../database/actions/items';
+import { deleteItem, insertItem, selectItems, selectItemsFromFolder, updateItemIsArchived } from '../../../database/actions/items';
 
 // Types
 import { Folder, Task } from '../../../database';
@@ -29,7 +29,7 @@ const TreeMainScreen = ({ isArchived }) => {
   const [locationFolder, setLocationFolder] = useState();
   const [openTask, setOpenTask] = useState(null);
 
-  const setOpenTaskHandler = (taskId)=> {
+  const setOpenTaskHandler = (taskId) => {
     setOpenTask(taskId)
   }
 
@@ -41,7 +41,7 @@ const TreeMainScreen = ({ isArchived }) => {
     selectItemsFromFolder(currentFolderId).then((tasks) => {
       isArchived
         ? setTasksList(tasks.filter(task => task.isArchived))
-        : setTasksList(tasks);
+        : setTasksList(tasks.filter(task => !task.isArchived));
     })
     selectFolderById(currentFolderId).then((folder) => {
       setLocationFolder(folder)
@@ -103,7 +103,7 @@ const TreeMainScreen = ({ isArchived }) => {
   const foldersListWithTypes = foldersList.map(item => { return { ...item, type: 'folder' } })
   const tasksListWithTypes = tasksList.map(item => { return { ...item, type: 'task' } })
   const itemsList = [...foldersListWithTypes, ...tasksListWithTypes]
-  const renderFolder = ({item}) => {
+  const renderFolder = ({ item }) => {
     if (item.type == 'folder') {
       return <FolderItem
         onItemPress={() => {
@@ -142,26 +142,42 @@ const TreeMainScreen = ({ isArchived }) => {
       />
     }
     if (item.type == 'task') {
-      return <ExpandingTaskItem
-        taskName={item.name}
-        taskDescription={item.description}
-        onDeletePress={() => {
-          deleteItem(item.id)
-          fetchFoldersAndItems()
-        }}
-        onEditPress={() => {
-          navigationService.navigate('Tree', {
-            screen: 'Edit_Task',
-            params: {
-              taskToEdit: item
-            }
-          })
-        }}
-        isOpen = {openTask == item.id}
-        setIsOpen = {setOpenTaskHandler}
-        taskId = {item.id}
-        style={{ marginTop: 1 }}
-      />
+      if (!isArchived) {
+        return <ExpandingTaskItem
+          taskName={item.name}
+          taskDescription={item.description}
+          onDeletePress={() => {
+            deleteItem(item.id)
+            fetchFoldersAndItems()
+          }}
+          onEditPress={() => {
+            navigationService.navigate('Tree', {
+              screen: 'Edit_Task',
+              params: {
+                taskToEdit: item
+              }
+            })
+          }}
+          isOpen={openTask == item.id}
+          setIsOpen={setOpenTaskHandler}
+          taskId={item.id}
+          style={{ marginTop: 1 }}
+        />
+      }
+      else {
+        return <ExpandingTaskItem
+          taskName={item.name}
+          taskDescription={item.description}
+          onCancelArchive={() => {
+            updateItemIsArchived(item.id, false)
+            fetchFoldersAndItems()
+          }}
+          isOpen={openTask == item.id}
+          setIsOpen={setOpenTaskHandler}
+          taskId={item.id}
+          style={{ marginTop: 1 }}
+        />
+      }
     }
   }
   return (

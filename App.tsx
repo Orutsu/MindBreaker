@@ -8,6 +8,26 @@ import * as Permissions from 'expo-permissions'
 import * as Notifications from 'expo-notifications'
 
 
+// const secondsInDay = 60 * 60 * 24;
+// Notifications.scheduleNotificationAsync({
+//     content: {
+//         body : 'You probably should check learning items'
+//     },
+//     trigger: {
+//         seconds: secondsInDay,
+//         repeats: true
+//     }
+// })
+
+Notifications.setNotificationHandler({
+    handleNotification : async () => {
+        return {
+            shouldShowAlert: true
+        }
+    }
+})
+
+
 export default (): React.ReactFragment => {
     const [initializedDb, setinItializedDb] = useState(false)
     const [initializedRootFolder, setInitializedRootFolder] = useState(false)
